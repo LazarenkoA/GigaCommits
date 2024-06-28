@@ -1,6 +1,7 @@
 package git
 
 import (
+	"bytes"
 	"context"
 	"github.com/k0kubun/pp/v3"
 	"github.com/pkg/errors"
@@ -28,8 +29,14 @@ func (c *Client) GitDiff(debug bool) (string, error) {
 	}
 
 	cmd := exec.CommandContext(c.ctx, path, "diff", "--diff-algorithm=minimal") // --cached
-	output, err := cmd.CombinedOutput()
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err = cmd.Run()
 	if err != nil {
+		pp.Println("STDERR:", stderr.String())
 		return "", errors.Wrap(err, "execute git error")
 	}
 
@@ -37,5 +44,5 @@ func (c *Client) GitDiff(debug bool) (string, error) {
 		pp.Println(cmd)
 	}
 
-	return string(output), nil
+	return stdout.String(), nil
 }
