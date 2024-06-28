@@ -1,6 +1,6 @@
 module github.com/LazarenkoA/GigaCommits
 
-go 1.22
+go 1.21
 
 require (
 	github.com/k0kubun/pp/v3 v3.2.0
