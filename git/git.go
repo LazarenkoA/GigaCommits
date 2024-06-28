@@ -31,8 +31,7 @@ func (c *Client) GitDiff(debug bool) (string, error) {
 	cmd := exec.CommandContext(c.ctx, path, "diff", "--diff-algorithm=minimal") // --cached
 
 	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
+	cmd.Stdout, cmd.Stderr = &stdout, &stderr
 
 	err = cmd.Run()
 	if err != nil {

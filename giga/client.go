@@ -54,7 +54,6 @@ func (c *Client) GetCommitMsg(diff string, locale string, maxLength int, debug b
 			},
 		},
 		Temperature: ptr(0.7),
-		TopP:        ptr(.1),
 		MaxTokens:   ptr[int64](200),
 	}
 
