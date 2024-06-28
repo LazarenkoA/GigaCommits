@@ -41,9 +41,6 @@ func (c *Client) GetCommitMsg(diff string, locale string, maxLength int, debug b
 		return "", errors.New("diff is not defined")
 	}
 
-	//models, err := c.client.ModelsWithContext(c.ctx)
-	//_ = models
-
 	req := &gigachat.ChatRequest{
 		Model: "GigaChat",
 		Messages: []gigachat.Message{

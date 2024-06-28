@@ -13,14 +13,14 @@ GigaCommits - это CLI инструмент для генерации сооб
 
 ### Установка
 ```shell
-go install https://github.com/LazarenkoA/GigaCommits
+go install github.com/LazarenkoA/GigaCommits
 ```
 
 ### Использование
 ```shell
-gigacommit
+GigaCommits
 ```
-
+![](img/img.gif)
 
 <sub><sup>Проект был вдохновлен аналогичным инструментом [aicommits](https://github.com/Nutlope/aicommits)<br>
 Проект работает на базе [gigachat api](https://developers.sber.ru/docs/ru/gigachat/api/reference/rest/post-chat) с использованием клиента [Go GigaChat](https://github.com/paulrzcz/go-gigachat)</sub></sup>
