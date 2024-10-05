@@ -22,6 +22,18 @@ func NewGitClient(ctx context.Context) *Client {
 	}
 }
 
+func (c *Client) DisableAutoCRLF() error {
+	path, err := exec.LookPath(gitBin)
+	if err != nil {
+		return errors.Wrap(err, "lookPath error")
+	}
+
+	cmd := exec.CommandContext(c.ctx, path, "config", "core.autocrlf", "false") // "--global"
+	err = cmd.Run()
+
+	return errors.Wrap(err, "git exec error")
+}
+
 func (c *Client) GitDiff(debug bool) (string, error) {
 	path, err := exec.LookPath(gitBin)
 	if err != nil {

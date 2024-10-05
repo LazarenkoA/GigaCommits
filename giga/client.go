@@ -42,19 +42,19 @@ func (c *Client) GetCommitMsg(diff string, locale string, maxLength int, debug b
 	}
 
 	req := &gigachat.ChatRequest{
-		Model: "GigaChat",
+		Model: "GigaChat-Pro",
 		Messages: []gigachat.Message{
 			{
 				Role:    "system",
-				Content: c.prompt(locale, maxLength),
+				Content: c.prompt(locale),
 			},
 			{
 				Role:    "user",
-				Content: diff,
+				Content: "вот результат команды \"git diff\"\n" + diff,
 			},
 		},
 		Temperature: ptr(0.7),
-		MaxTokens:   ptr[int64](200),
+		MaxTokens:   ptr[int64](1000),
 	}
 
 	if debug {
@@ -79,12 +79,11 @@ func (c *Client) GetCommitMsg(diff string, locale string, maxLength int, debug b
 	return resp.Choices[0].Message.Content, nil
 }
 
-func (c *Client) prompt(locale string, maxLength int) string {
-	return fmt.Sprintf("Ты программист. Сгенерируйте краткое описание изменений для git commit, "+
-		"для следующего diff с учетом приведенных ниже спецификаций:\n"+
+func (c *Client) prompt(locale string) string {
+	return fmt.Sprintf("Ты программист. Проанализируй отправленый тебе результат команды \"git diff\" и сгенерируйте КРАТКОЕ описание ИЗ ОДНОГО ПРЕДЛОЖЕНИЯ для команды git commit. "+
+		"Необходимо учесть приведенные ниже спецификации:\n"+
 		"Язык сообщения: %s\n"+
-		"В сообщении о фиксации должно быть не более символов %d\n"+
-		"Исключите все ненужно. Весь ваш ответ будет передан непосредственно в git commit.", locale, maxLength)
+		"Исключите все ненужно. Весь ваш ответ будет передан непосредственно в git commit.", locale)
 }
 
 func ptr[T any](v T) *T {

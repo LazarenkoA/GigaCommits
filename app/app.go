@@ -22,6 +22,7 @@ type confMap map[string]string
 
 type IGit interface {
 	GitDiff(debug bool) (string, error)
+	DisableAutoCRLF() error
 }
 
 type App struct {
@@ -136,6 +137,10 @@ func (a *App) sendRequest() {
 
 	multi.Start()
 	defer multi.Stop()
+
+	if err := a.git.DisableAutoCRLF(); err != nil {
+		spinner1.Warning(err.Error())
+	}
 
 	diff, err := a.git.GitDiff(a.debug)
 	if err != nil {
