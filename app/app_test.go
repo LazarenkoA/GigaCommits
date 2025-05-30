@@ -17,18 +17,15 @@ func Test_checkConf(t *testing.T) {
 		defer p.Reset()
 		defer os.RemoveAll("test.yaml")
 
-		clientID, clientSecret := checkConf("test.yaml")
-		assert.Equal(t, "111", clientID)
-		assert.Equal(t, "111", clientSecret)
+		authKey := checkConf("test.yaml")
+		assert.Equal(t, "111", authKey)
 	})
 	t.Run("test2", func(t *testing.T) {
 		defer os.RemoveAll("test.yaml")
 
-		os.Setenv(clientIDKey, "clientID")
-		os.Setenv(clientSecretKey, "clientSecret")
+		os.Setenv(clientAuthKey, "authKey")
 
-		clientID, clientSecret := checkConf("test.yaml")
-		assert.Equal(t, "clientID", clientID)
-		assert.Equal(t, "clientSecret", clientSecret)
+		authKey := checkConf("test.yaml")
+		assert.Equal(t, "authKey", authKey)
 	})
 }

@@ -2,13 +2,9 @@ module github.com/LazarenkoA/GigaCommits
 
 go 1.21
 
-replace (
-	//github.com/paulrzcz/go-gigachat => ../go-gigachat
-)
-
 require (
 	github.com/k0kubun/pp/v3 v3.2.0
-	github.com/paulrzcz/go-gigachat v0.1.1
+	github.com/paulrzcz/go-gigachat v0.1.2
 	github.com/pkg/errors v0.9.1
 	github.com/pterm/pterm v0.12.79
 	gopkg.in/yaml.v2 v2.2.4

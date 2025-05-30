@@ -22,7 +22,6 @@ type confMap map[string]string
 
 type IGit interface {
 	GitDiff(debug bool) (string, error)
-	DisableAutoCRLF() error
 }
 
 type App struct {
@@ -34,16 +33,15 @@ type App struct {
 }
 
 const (
-	clientIDKey     = "clientID"
-	clientSecretKey = "clientSecret"
-	confPath        = "conf.yaml"
+	clientAuthKey = "authKey"
+	confPath      = "conf.yaml"
 )
 
 func NewApp(parentCtx context.Context, debug bool) (*App, error) {
 	ctx, cancel := context.WithCancel(parentCtx)
-	clientId, clientSecret := checkConf(confPath)
+	authKey := checkConf(confPath)
 
-	giga, err := giga.NewGigaClient(ctx, clientId, clientSecret)
+	giga, err := giga.NewGigaClient(ctx, authKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "create giga client")
 	}
@@ -62,33 +60,22 @@ func (a *App) Run() {
 	a.sendRequest()
 }
 
-func checkConf(confPath string) (string, string) {
+func checkConf(confPath string) string {
 	conf := loadConf(confPath)
 	defer func() { saveConf(conf, confPath) }()
 
-	clientID := os.Getenv(clientIDKey)
-	if clientID == "" {
-		clientID = conf.getVal(clientIDKey)
+	authKey := os.Getenv(clientAuthKey)
+	if authKey == "" {
+		authKey = conf.getVal(clientAuthKey)
 	}
 
-	clientSecret := os.Getenv(clientSecretKey)
-	if clientSecret == "" {
-		clientSecret = conf.getVal(clientSecretKey)
+	if authKey == "" {
+		authKey, _ = pterm.DefaultInteractiveTextInput.Show("введите authKey")
+		os.Setenv(authKey, authKey)
+		conf[clientAuthKey] = authKey
 	}
 
-	if clientID == "" {
-		clientID, _ = pterm.DefaultInteractiveTextInput.Show("введите clientID")
-		os.Setenv(clientIDKey, clientID)
-		conf[clientIDKey] = clientID
-	}
-
-	if clientSecret == "" {
-		clientSecret, _ = pterm.DefaultInteractiveTextInput.WithMask("*").Show("введите clientSecret")
-		os.Setenv(clientSecretKey, clientSecret)
-		conf[clientSecretKey] = clientSecret
-	}
-
-	return clientID, clientSecret
+	return authKey
 }
 
 func loadConf(confPath string) confMap {
@@ -138,9 +125,9 @@ func (a *App) sendRequest() {
 	multi.Start()
 	defer multi.Stop()
 
-	if err := a.git.DisableAutoCRLF(); err != nil {
-		spinner1.Warning(err.Error())
-	}
+	//if err := a.git.DisableAutoCRLF(); err != nil {
+	//	spinner1.Warning(err.Error())
+	//}
 
 	diff, err := a.git.GitDiff(a.debug)
 	if err != nil {

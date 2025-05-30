@@ -21,17 +21,17 @@ func Test_GetCommitMsg(t *testing.T) {
 	defer c.Finish()
 
 	t.Run("error create", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*Client, error) {
 			return nil, errors.New("error")
 		})
 		defer p.Reset()
 
-		cli, err := NewGigaClient(context.Background(), "111", "222")
+		cli, err := NewGigaClient(context.Background(), "111")
 		assert.Nil(t, cli)
 		assert.EqualError(t, err, "newGigaClient error: error")
 	})
 	t.Run("auth error", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*gigachat.Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*gigachat.Client, error) {
 			return new(gigachat.Client), nil
 		})
 		defer p.Reset()
@@ -39,14 +39,14 @@ func Test_GetCommitMsg(t *testing.T) {
 		client := mock_giga.NewMockIGigaClient(c)
 		client.EXPECT().AuthWithContext(gomock.Any()).Return(errors.New("error"))
 
-		cli, _ := NewGigaClient(context.Background(), "111", "222")
+		cli, _ := NewGigaClient(context.Background(), "111")
 		cli.client = client
 
 		_, err := cli.GetCommitMsg("", "ru", 100, false)
 		assert.EqualError(t, err, "auth error: error")
 	})
 	t.Run("req error", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*gigachat.Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*gigachat.Client, error) {
 			return new(gigachat.Client), nil
 		})
 		defer p.Reset()
@@ -55,14 +55,14 @@ func Test_GetCommitMsg(t *testing.T) {
 		client.EXPECT().AuthWithContext(gomock.Any()).Return(nil)
 		client.EXPECT().ChatWithContext(gomock.Any(), gomock.Any()).Return(nil, errors.New("error"))
 
-		cli, _ := NewGigaClient(context.Background(), "111", "222")
+		cli, _ := NewGigaClient(context.Background(), "111")
 		cli.client = client
 
 		_, err := cli.GetCommitMsg("tyuyu", "ru", 100, false)
 		assert.EqualError(t, err, "request error: error")
 	})
 	t.Run("response does not contain data", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*gigachat.Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*gigachat.Client, error) {
 			return new(gigachat.Client), nil
 		})
 		defer p.Reset()
@@ -71,14 +71,14 @@ func Test_GetCommitMsg(t *testing.T) {
 		client.EXPECT().AuthWithContext(gomock.Any()).Return(nil)
 		client.EXPECT().ChatWithContext(gomock.Any(), gomock.Any()).Return(&gigachat.ChatResponse{}, nil)
 
-		cli, _ := NewGigaClient(context.Background(), "111", "222")
+		cli, _ := NewGigaClient(context.Background(), "111")
 		cli.client = client
 
 		_, err := cli.GetCommitMsg("ghgh", "ru", 100, false)
 		assert.EqualError(t, err, "response does not contain data")
 	})
 	t.Run("diff is not defined", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*gigachat.Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*gigachat.Client, error) {
 			return new(gigachat.Client), nil
 		})
 		defer p.Reset()
@@ -86,14 +86,14 @@ func Test_GetCommitMsg(t *testing.T) {
 		client := mock_giga.NewMockIGigaClient(c)
 		client.EXPECT().AuthWithContext(gomock.Any()).Return(nil)
 
-		cli, _ := NewGigaClient(context.Background(), "111", "222")
+		cli, _ := NewGigaClient(context.Background(), "111")
 		cli.client = client
 
 		_, err := cli.GetCommitMsg("", "ru", 100, false)
 		assert.EqualError(t, err, "diff is not defined")
 	})
 	t.Run("pass", func(t *testing.T) {
-		p := gomonkey.ApplyFunc(gigachat.NewInsecureClient, func(clientId string, clientSecret string) (*gigachat.Client, error) {
+		p := gomonkey.ApplyFunc(gigachat.NewInsecureClientWithAuthKey, func(_ string) (*gigachat.Client, error) {
 			return new(gigachat.Client), nil
 		})
 		defer p.Reset()
@@ -104,7 +104,7 @@ func Test_GetCommitMsg(t *testing.T) {
 			Choices: []gigachat.Choice{{Message: gigachat.Message{Content: "test"}}},
 		}, nil)
 
-		cli, _ := NewGigaClient(context.Background(), "111", "222")
+		cli, _ := NewGigaClient(context.Background(), "111")
 		cli.client = client
 
 		msg, err := cli.GetCommitMsg("hjhj", "ru", 100, false)

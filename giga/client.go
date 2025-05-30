@@ -19,8 +19,8 @@ type Client struct {
 	client IGigaClient
 }
 
-func NewGigaClient(ctx context.Context, clientId, clientSecret string) (*Client, error) {
-	client, err := gigachat.NewInsecureClient(clientId, clientSecret)
+func NewGigaClient(ctx context.Context, authKey string) (*Client, error) {
+	client, err := gigachat.NewInsecureClientWithAuthKey(authKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "newGigaClient error")
 	}
