@@ -34,7 +34,7 @@ type App struct {
 
 const (
 	clientAuthKey = "authKey"
-	confPath      = "conf.yaml"
+	confPath      = "giga_conf.yaml"
 )
 
 func NewApp(parentCtx context.Context, debug bool) (*App, error) {

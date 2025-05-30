@@ -20,5 +20,5 @@
 # Go workspace file
 go.work
 go.work.sum
-conf.yaml
+giga_conf.yaml
 .idea
