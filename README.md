@@ -9,7 +9,7 @@ GigaCommits - это CLI инструмент для генерации сооб
 
 * Git
 * Go (версия 1.21 и выше)
-* Доступ к GigaChat API (необходим client ID и client Secret)
+* Доступ к GigaChat API (необходим authKey)
 
 ### Установка
 ```shell
